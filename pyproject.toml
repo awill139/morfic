@@ -40,4 +40,4 @@ version = {attr = "morfic.__version__"}
 include = ["morfic*"]
 
 [tool.setuptools.package-data]
-morfic = ["static/*.html", "catalog/*.json", "distribution.json"]
+morfic = ["static/*.html", "static/*.svg", "catalog/*.json", "distribution.json"]

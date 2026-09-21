@@ -75,6 +75,11 @@ def root():
     return FileResponse(Path(__file__).parent / "static" / "index.html")
 
 
+@app.get("/favicon.svg")
+def favicon():
+    return FileResponse(Path(__file__).parent / "static" / "favicon.svg", media_type="image/svg+xml")
+
+
 def _provider_ready(cfg: ProviderSettings) -> bool:
     if cfg.provider == "official":
         if not has_secret("official_token"):
