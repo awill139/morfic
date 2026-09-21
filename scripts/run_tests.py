@@ -27,7 +27,8 @@ def main(argv: list[str]) -> int:
         return 2
     failures = []
     for test in tests:
-        env = dict(os.environ, PYTHONPATH=str(ROOT), MORFIC_HOME=tempfile.mkdtemp(prefix="morfic-test-home-"), MORFIC_SECRET_STORE="file")
+        support = ROOT / "tests" / "support"  # sitecustomize.py: skips a slow reverse-DNS lookup in http.server (see file)
+        env = dict(os.environ, PYTHONPATH=os.pathsep.join([str(ROOT), str(support)]), MORFIC_HOME=tempfile.mkdtemp(prefix="morfic-test-home-"), MORFIC_SECRET_STORE="file")
         started = time.time()
         try:
             proc = subprocess.run([sys.executable, str(test)], cwd=ROOT, env=env, capture_output=True, text=True, timeout=TIMEOUT)

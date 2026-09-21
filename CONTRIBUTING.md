@@ -20,7 +20,7 @@ python scripts/run_tests.py security_guard  # one test
 
 Each file in `tests/` is a standalone script that prints a `... PASS` line and exits non-zero on
 failure. `run_tests.py` runs each in its own process with a throwaway `MORFIC_HOME`, so tests never
-touch your real `~/.morfic`. Tests use local mock servers; they need no API keys and no network
+touch your real `~/.morfic`. (`tests/support/sitecustomize.py` is put on `PYTHONPATH` by the runner; it skips a reverse-DNS lookup that makes Python's built-in HTTP server take ~35 s to start on GitHub's macOS runners.) Tests use local mock servers; they need no API keys and no network
 (the catalog pin *refresh* script is the only thing that talks to GitHub).
 
 Please add or update a test with every behaviour change, and a regression test with every bug fix.
