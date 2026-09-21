@@ -1,37 +1,155 @@
 name: Build desktop installers
 
+# Builds the macOS (Apple Silicon and Intel) and Windows installers, starts each built app to prove it
+# runs, and on a release tag attaches the ones that passed to the GitHub release.
+#
+#   * Push a tag like v0.7.5            -> build, smoke test, create/attach to the release.
+#   * Run manually with release_tag     -> build that tag's code and attach to its existing release.
+#     Files that are already on the release are left alone (delete an asset first to replace it).
+#   * Run manually without release_tag  -> build and smoke test only; installers are kept as artifacts.
 on:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Existing tag (e.g. v0.7.4) to build and attach to. Leave empty to only build."
+        required: false
+        default: ""
   push:
     tags:
       - 'v*'
 
-jobs:
-  windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Build Windows executable
-        shell: powershell
-        run: .\scripts\build_windows.ps1
-      - uses: actions/upload-artifact@v4
-        with:
-          name: morfic-windows
-          path: dist/Morfic.exe
+permissions:
+  contents: read
 
-  macos:
-    runs-on: macos-latest
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: mac-apple-silicon
+            os: macos-latest
+            shell: bash
+            build: ./scripts/build_mac.sh
+            built: dist/Morfic.dmg
+            app: dist/Morfic.app/Contents/MacOS/Morfic
+            ext: dmg
+          - name: mac-intel
+            os: macos-15-intel
+            shell: bash
+            build: ./scripts/build_mac.sh
+            built: dist/Morfic.dmg
+            app: dist/Morfic.app/Contents/MacOS/Morfic
+            ext: dmg
+          - name: windows-x64
+            os: windows-latest
+            shell: powershell
+            build: .\scripts\build_windows.ps1
+            built: dist/Morfic.exe
+            app: dist/Morfic.exe
+            ext: exe
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_tag || github.ref }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Build macOS app and DMG
-        run: ./scripts/build_mac.sh
+
+      - name: Build
+        shell: ${{ matrix.shell }}
+        run: ${{ matrix.build }}
+
+      # Starts the built app with an empty data directory and checks that it answers, is the expected
+      # version, serves the UI, and rejects a request with a foreign Host header (the local security check).
+      - name: Smoke test the built app
+        shell: python
+        env:
+          APP: ${{ matrix.app }}
+        run: |
+          import http.client, json, os, re, subprocess, sys, tempfile, time, urllib.request
+          version = re.search(r'__version__ = "([^"]+)"', open("morfic/__init__.py").read()).group(1)
+          port = 8791
+          env = dict(os.environ, MORFIC_HOME=tempfile.mkdtemp(), MORFIC_PORT=str(port), MORFIC_SECRET_STORE="file")
+          log = open("smoke.log", "wb")
+          proc = subprocess.Popen([os.environ["APP"]], env=env, stdout=log, stderr=subprocess.STDOUT)
+          status = None
+          try:
+              deadline = time.time() + 120
+              while time.time() < deadline and status is None:
+                  try:
+                      status = json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}/api/status", timeout=3))
+                  except Exception:
+                      if proc.poll() is not None:
+                          break  # the app exited without ever answering
+                      time.sleep(2)
+              assert status is not None, "the app never answered /api/status"
+              assert status["version"] == version, f"expected {version}, got {status['version']}"
+              page = urllib.request.urlopen(f"http://127.0.0.1:{port}/", timeout=5).read().decode()
+              assert "<title>Morfic</title>" in page, "UI page missing"
+              conn = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
+              conn.request("GET", "/api/status", headers={"Host": "evil.example"})
+              assert conn.getresponse().status == 403, "foreign Host header was not rejected"
+              print("smoke test passed:", status)
+          finally:
+              proc.kill()
+              log.close()
+              print(open("smoke.log", errors="replace").read()[-3000:])
+
+      - name: Name the installer
+        shell: python
+        env:
+          BUILT: ${{ matrix.built }}
+          SUFFIX: ${{ matrix.name }}
+          EXT: ${{ matrix.ext }}
+        run: |
+          import os, re, shutil
+          version = re.search(r'__version__ = "([^"]+)"', open("morfic/__init__.py").read()).group(1)
+          os.makedirs("release", exist_ok=True)
+          shutil.copy(os.environ["BUILT"], f"release/Morfic-{version}-{os.environ['SUFFIX']}.{os.environ['EXT']}")
+
       - uses: actions/upload-artifact@v4
         with:
-          name: morfic-macos
-          path: dist/Morfic.dmg
+          name: installer-${{ matrix.name }}
+          path: release/*
+          if-no-files-found: error
+
+  release:
+    name: Attach installers to the release
+    needs: build
+    # Runs even if one platform failed, so the platforms that passed still ship.
+    if: ${{ !cancelled() && (startsWith(github.ref, 'refs/tags/v') || inputs.release_tag != '') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: installer-*
+          merge-multiple: true
+          path: release
+        continue-on-error: true
+      - name: Attach
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.release_tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+          ls -la release || true
+          [ -d release ] && [ -n "$(ls -A release)" ] || { echo "No installer passed its smoke test; nothing to attach."; exit 1; }
+          if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --title "Morfic ${TAG#v}" --generate-notes
+          fi
+          existing="$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name')"
+          for f in release/*; do
+            name="$(basename "$f")"
+            if grep -qxF "$name" <<<"$existing"; then
+              echo "Skipping $name: already on the release."
+            else
+              gh release upload "$TAG" "$f" --repo "$GITHUB_REPOSITORY"
+              echo "Attached $name"
+            fi
+          done

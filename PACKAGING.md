@@ -65,4 +65,8 @@ certificate (e.g. `signtool sign /fd SHA256 /tr <timestamp-url> /td SHA256 /a di
 ## CI
 
 `.github/workflows/tests.yml` runs the test suite on every push and pull request.
-`.github/workflows/build-desktop.yml` builds unsigned community installers on `v*` tags.
+`.github/workflows/build-desktop.yml` builds community installers for macOS (Apple Silicon and Intel) and Windows,
+starts each built app to check that it runs (version, UI page, and the local security check), and on a `v*` tag
+attaches the ones that passed to the GitHub release (creating the release if needed). To build and attach for an
+existing tag, run the workflow manually and enter the tag in `release_tag`. Assets already on the release are left
+alone. The installers are unsigned; see above.
