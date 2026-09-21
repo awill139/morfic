@@ -17,12 +17,37 @@ from .containerize import ensure_container_recipe
 from .runtimes import container_runtime, container_setup_message, ensure_managed_dotnet, dotnet_executable
 from .db import add_log, get_app, update_app
 from .gitops import clone_repo
+from .inspector import inspect_repo
 from .models import AppManifest, DeploymentPlan
-from .planner import make_plan
+from .planner import heuristic_plan, make_plan
 from .repair import apply_patch, propose_repair
 from .hosted import emit_event
 
 PROCESSES: dict[int, subprocess.Popen] = {}
+
+
+def _compose_project(app_id: int) -> str:
+    """Isolated Compose project name per app.
+
+    Compose defaults the project name to the working-directory basename, which is
+    identical for every Morfic app checkout — without this, a second app's
+    `up --remove-orphans` can tear down the first app's stack.
+    """
+    return f"morfic-{app_id}"
+
+
+def _compose_base(app_id: int, plan: DeploymentPlan) -> list[str]:
+    runtime = container_runtime()
+    return [runtime, "compose", "-p", plan.compose_project or _compose_project(app_id), "-f", plan.compose_file]
+
+
+async def plan_with_fallback(repo: Path, intent: str = "") -> DeploymentPlan:
+    """Deterministic planning first (no AI provider needed); the LLM is only
+    consulted when the repository layout can't be inferred automatically."""
+    plan = heuristic_plan(repo, inspect_repo(repo))
+    if plan.project_type != "unknown":
+        return plan
+    return await make_plan(repo, intent)
 
 
 
@@ -46,7 +71,10 @@ async def deploy_github(app_id: int, repo_url: str, intent: str, plan_override: 
             log = await asyncio.to_thread(clone_repo, repo_url, repo, ref)
             add_log(app_id, "git", log)
         update_app(app_id, status="planning")
-        plan = plan_override or await make_plan(repo, intent)
+        # Never mutate a shared curated plan: each install gets its own copy.
+        plan = plan_override.model_copy(deep=True) if plan_override else await plan_with_fallback(repo, intent)
+        if plan.compose_file and not plan.compose_project:
+            plan.compose_project = _compose_project(app_id)
         manifest = AppManifest(name=plan.name or app.name, description=plan.summary or app.description, requested_intent=intent,
             capabilities=app.capabilities, source_type="github", source_url=repo_url, deployment_plan=plan)
         update_app(app_id, name=manifest.name, description=manifest.description, manifest_json=manifest)
@@ -78,7 +106,13 @@ async def run_repo(app_id: int, repo: Path, plan: DeploymentPlan, manifest: AppM
             asyncio.create_task(emit_event("execution_failure", app_ref=str(app_id), source_type="github", stage="run", success=False, error_class=type(e).__name__, error_message=last_error, repair_attempt=attempt))
             if attempt >= settings.max_repair_attempts:
                 break
-            action = await propose_repair(repo, plan, last_error)
+            try:
+                action = await propose_repair(repo, plan, last_error)
+            except Exception as repair_err:
+                # The repair step itself failed (e.g. no AI provider configured).
+                # Report the original deployment error, not the repair failure.
+                add_log(app_id, "repair", f"AI repair unavailable: {repair_err}")
+                break
             if not action:
                 break
             add_log(app_id, "repair", action.summary)
@@ -104,9 +138,9 @@ async def _prepare_environment(app_id: int, repo: Path, plan: DeploymentPlan) ->
         compose = repo / plan.compose_file
         if not compose.exists():
             raise RuntimeError(f"Compose file not found: {plan.compose_file}")
-        await _run_checked(app_id, [runtime, "compose", "-f", plan.compose_file, "config"], repo, 180)
+        await _run_checked(app_id, _compose_base(app_id, plan) + ["config"], repo, 180)
         # Pull declared images when possible. Compose will build local services during up if needed.
-        await _run_checked(app_id, [runtime, "compose", "-f", plan.compose_file, "pull", "--ignore-buildable"], repo, 1800, allow_failure=True)
+        await _run_checked(app_id, _compose_base(app_id, plan) + ["pull", "--ignore-buildable"], repo, 1800, allow_failure=True)
         return
     if runtime and plan.project_type in {"docker", "python", "node", "dotnet", "static"}:
         dockerfile = ensure_container_recipe(repo, plan)
@@ -178,7 +212,7 @@ async def _start(app_id: int, repo: Path, plan: DeploymentPlan) -> dict[str, Any
         return {"pid":p.pid,"local_url":None}
     if use_compose:
         host_port = plan.port
-        await _run_checked(app_id, [runtime, "compose", "-f", plan.compose_file, "up", "-d", "--remove-orphans"], repo, 1800)
+        await _run_checked(app_id, _compose_base(app_id, plan) + ["up", "-d", "--remove-orphans"], repo, 1800)
         if plan.port:
             url = f"http://127.0.0.1:{plan.port}{plan.healthcheck_path}"
             if not await _wait_http(url, 45):
@@ -264,10 +298,13 @@ async def invoke_cli(app_id: int, values: dict[str, str] | None = None, raw_args
 def stop_app(app_id: int) -> None:
     runtime = container_runtime()
     app = get_app(app_id)
-    if runtime and app and app.manifest and app.manifest.deployment_plan and app.manifest.deployment_plan.compose_file:
+    plan = app.manifest.deployment_plan if app and app.manifest else None
+    if runtime and plan and plan.compose_file:
         try:
             repo = Path(app.workspace) / "repo"
-            subprocess.run([runtime, "compose", "-f", app.manifest.deployment_plan.compose_file, "down"], cwd=repo, capture_output=True, text=True, timeout=60)
+            subprocess.run(_compose_base(app_id, plan) + ["down"], cwd=repo, capture_output=True, text=True, timeout=60)
+            # Best-effort cleanup of stacks created before per-app project names existed.
+            subprocess.run([runtime, "compose", "-f", plan.compose_file, "down"], cwd=repo, capture_output=True, text=True, timeout=60)
         except Exception:
             pass
     elif runtime:

@@ -207,12 +207,9 @@ async def install_catalog(catalog_id: str):
     entry = next((x for x in load_catalog() if x.id == catalog_id), None)
     if not entry:
         raise HTTPException(404, "Catalog item not found")
-    # Known-good curated deployment plans do not require an AI provider simply to install.
-    # AI is only required when Morfic must inspect/adapt an unplanned repository.
-    if entry.deployment_plan is None:
-        cfg = load_provider_settings()
-        if not _provider_ready(cfg):
-            raise HTTPException(400, "Connect the Official service or add an OpenAI/Anthropic key so Morfic can inspect and adapt this repository.")
+    # Heuristic planning covers most repositories without any AI provider, so installs
+    # no longer gate on a configured key up front. If the heuristic planner cannot infer
+    # a deployment, the LLM fallback raises a clear "configure a provider" error then.
     try:
         resolution, local_app = await request_catalog_software(catalog_id)
         return {"resolution": resolution.model_dump(), "app": local_app.model_dump()}

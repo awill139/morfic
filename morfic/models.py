@@ -32,6 +32,9 @@ class DeploymentPlan(BaseModel):
     frontend: FrontendSpec = Field(default_factory=FrontendSpec)
     detected_files: list[str] = Field(default_factory=list)
     compose_file: str | None = None
+    # Compose project name pinned at install time so each app's stack is isolated.
+    # Older installs lack this and fall back to the per-app default.
+    compose_project: str | None = None
     container_image: str | None = None
     persistent_mounts: dict[str, str] = Field(default_factory=dict)
     media_mounts: bool = False
