@@ -3,7 +3,22 @@
 All notable changes to the Morfic runtime are recorded here. This project follows
 [Semantic Versioning](https://semver.org/).
 
-## Unreleased
+## 0.7.5 — 2026-09-21
+
+### Changed
+- One brand mark everywhere: the app icon, the favicon and the in-app logo now use the bow-tie mark from the
+  website. The old app icon had an opaque square behind the tile; the new one has a transparent margin and
+  rounded tile as macOS expects. `scripts/make_icon.py` generates every icon.
+- The app serves `/favicon.svg`.
+
+### Added
+- The installer workflow starts each built app (Apple silicon Mac, Intel Mac, Windows) to check its version,
+  interface and security check before attaching it to the release, and attaches installers on release tags.
+
+### Fixed
+- The test suite no longer takes ~35 s per mock server on GitHub's macOS runners.
+
+## 0.7.4 — first public release
 
 ### Security
 - The local API now rejects requests whose `Host` is not a loopback name (DNS-rebinding defence) and
@@ -38,5 +53,4 @@ All notable changes to the Morfic runtime are recorded here. This project follow
   host-execution policy.
 - `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`.
 
-## 0.7.4
-See `BUILD_NOTES.md`.
+Earlier internal builds are described in `BUILD_NOTES.md`.
