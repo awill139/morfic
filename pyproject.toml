@@ -1,0 +1,43 @@
+[project]
+name = "morfic-runtime"
+dynamic = ["version"]
+description = "Open-source local runtime that materializes, runs, repairs, and evolves software from natural-language intent."
+license = {file = "LICENSE"}
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.30,<1",
+  "httpx>=0.27,<1",
+  "pydantic>=2.8,<3",
+  "keyring>=25,<26",
+]
+
+[project.scripts]
+morfic = "morfic.app:run"
+morfic-desktop = "morfic.desktop:main"
+# Legacy command names, kept so existing installs and scripts keep working.
+personal-software = "morfic.app:run"
+personal-software-desktop = "morfic.desktop:main"
+
+[project.optional-dependencies]
+desktop = [
+  "pywebview>=5.3,<6",
+]
+build = [
+  "pyinstaller>=6.10,<7",
+  "pillow>=10,<12",
+]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = {attr = "morfic.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["morfic*"]
+
+[tool.setuptools.package-data]
+morfic = ["static/*.html", "catalog/*.json", "distribution.json"]

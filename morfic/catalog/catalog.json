@@ -1,0 +1,588 @@
+[
+  {
+    "id": "cyberchef",
+    "name": "CyberChef",
+    "description": "Browser-based toolbox for encoding, decoding, compression, hashing, parsing, encryption, and data transformation.",
+    "capabilities": [
+      "encoding",
+      "decoding",
+      "hashing",
+      "data conversion",
+      "data analysis",
+      "developer tools"
+    ],
+    "keywords": [
+      "encode",
+      "decode",
+      "base64",
+      "hash",
+      "hex",
+      "checksum",
+      "convert data",
+      "encryption",
+      "cyberchef"
+    ],
+    "repo_url": "https://github.com/gchq/CyberChef.git",
+    "project_hint": "node",
+    "notes": "Existing web frontend. Apache-2.0. Medium build; prefer for broad data-transformation/toolbox requests.",
+    "ref": "8cd426dd4f40f1423912d5fad91b578a86a65112",
+    "ref_label": "v11.5.0"
+  },
+  {
+    "id": "stirling-pdf",
+    "name": "Stirling PDF",
+    "description": "Locally hosted PDF toolkit for merging, splitting, converting, compressing, OCR, redaction, and other PDF operations.",
+    "capabilities": [
+      "pdf",
+      "merge pdf",
+      "split pdf",
+      "convert pdf",
+      "compress pdf",
+      "pdf ocr",
+      "pdf editing"
+    ],
+    "keywords": [
+      "pdf",
+      "merge pdf",
+      "split pdf",
+      "compress pdf",
+      "ocr pdf",
+      "edit pdf",
+      "pdf tools"
+    ],
+    "repo_url": "https://github.com/Stirling-Tools/Stirling-PDF.git",
+    "project_hint": "docker",
+    "notes": "Existing web frontend. Heavy Docker app; select for a substantial PDF workspace, not a tiny one-off converter.",
+    "ref": "e556eba8326c8349aa0318034cfdb5c442dca21c",
+    "ref_label": "v2.14.3"
+  },
+  {
+    "id": "it-tools",
+    "name": "IT Tools",
+    "description": "Collection of local developer utilities, converters, formatters, generators, and text/network helpers.",
+    "capabilities": [
+      "developer tools",
+      "converters",
+      "formatters",
+      "generators",
+      "json tools",
+      "uuid",
+      "timestamp conversion"
+    ],
+    "keywords": [
+      "developer tools",
+      "uuid",
+      "json formatter",
+      "converter",
+      "timestamp",
+      "jwt",
+      "regex",
+      "url encode"
+    ],
+    "repo_url": "https://github.com/CorentinTh/it-tools.git",
+    "project_hint": "node",
+    "notes": "Existing web frontend. Good fit for broad utility/toolbox requests.",
+    "ref": "072083832dee8d7377b4d0b8c56dc66c48714fb7",
+    "ref_label": "v2.19.0"
+  },
+  {
+    "id": "excalidraw",
+    "name": "Excalidraw",
+    "description": "Open-source whiteboard for hand-drawn diagrams, flowcharts, sketches, and visual thinking.",
+    "capabilities": [
+      "whiteboard",
+      "diagram",
+      "drawing",
+      "sketch",
+      "flowchart"
+    ],
+    "keywords": [
+      "whiteboard",
+      "diagram",
+      "draw",
+      "sketch",
+      "flowchart",
+      "brainstorm"
+    ],
+    "repo_url": "https://github.com/excalidraw/excalidraw.git",
+    "project_hint": "node",
+    "notes": "Existing web frontend. Large Node/TypeScript repo; choose for actual drawing/whiteboard requests.",
+    "ref": "a2ec2889babf7d2295469c6d90ebe77fae57df84",
+    "ref_label": "v0.18.1"
+  },
+  {
+    "id": "yt-dlp",
+    "name": "yt-dlp",
+    "description": "Cross-platform command-line media downloader supporting many video and audio sites.",
+    "capabilities": [
+      "video download",
+      "audio download",
+      "media download",
+      "extract audio",
+      "download subtitles"
+    ],
+    "keywords": [
+      "download video",
+      "download audio",
+      "save video",
+      "youtube downloader",
+      "media downloader",
+      "subtitles"
+    ],
+    "repo_url": "https://github.com/yt-dlp/yt-dlp.git",
+    "project_hint": "python",
+    "notes": "CLI-first Python tool. No official general GUI; generate a friendly frontend for URL, format, output folder, and subtitle options.",
+    "ref": "3a08beaf031ab68f966401ead017ac81fe8486cf",
+    "ref_label": "2026.08.19"
+  },
+  {
+    "id": "rembg",
+    "name": "rembg",
+    "description": "Background-removal tool and Python library for images.",
+    "capabilities": [
+      "remove image background",
+      "transparent background",
+      "image segmentation",
+      "batch background removal"
+    ],
+    "keywords": [
+      "remove background",
+      "background remover",
+      "transparent png",
+      "cut out subject",
+      "image background"
+    ],
+    "repo_url": "https://github.com/danielgatis/rembg.git",
+    "project_hint": "python",
+    "notes": "CLI/library capability. Generate a drag-and-drop image frontend when selected. Model assets may download on first use.",
+    "ref": "47ac53f593ac1f7e6b17c3531ee4a455de092bcb",
+    "ref_label": "v2.0.84"
+  },
+  {
+    "id": "gallery-dl",
+    "name": "gallery-dl",
+    "description": "Cross-platform command-line downloader for image galleries and collections from many supported sites.",
+    "capabilities": [
+      "image gallery download",
+      "bulk image download",
+      "media archive",
+      "gallery download"
+    ],
+    "keywords": [
+      "download images",
+      "download gallery",
+      "save photo gallery",
+      "bulk image download",
+      "archive images"
+    ],
+    "repo_url": "https://github.com/mikf/gallery-dl.git",
+    "project_hint": "python",
+    "notes": "CLI-first Python tool. Generate a simple URL/options/download-folder UI. Upstream is also moving development toward Codeberg, so catalog health should be monitored.",
+    "ref": "19a64031b7e695dc76d7d689a1c9d7470fc0bfc7",
+    "ref_label": "v1.32.13"
+  },
+  {
+    "id": "ocrmypdf",
+    "name": "OCRmyPDF",
+    "description": "Adds searchable OCR text layers to scanned PDF files while preserving the original PDF structure.",
+    "capabilities": [
+      "ocr pdf",
+      "searchable pdf",
+      "scan to text",
+      "pdf ocr"
+    ],
+    "keywords": [
+      "ocr",
+      "searchable pdf",
+      "scan pdf",
+      "extract text from scanned pdf",
+      "make pdf searchable"
+    ],
+    "repo_url": "https://github.com/ocrmypdf/OCRmyPDF.git",
+    "project_hint": "python",
+    "notes": "CLI-first Python tool with external OCR/system dependencies. Generate a file-upload UI; deployment may require extra container packages.",
+    "ref": "64d999aea85a672b51d83747f0b567907d7b38bd",
+    "ref_label": "v17.12.1"
+  },
+  {
+    "id": "changedetection",
+    "name": "changedetection.io",
+    "description": "Self-hosted website change monitor for content changes, price drops, restocks, and alerts.",
+    "capabilities": [
+      "website monitoring",
+      "change detection",
+      "price tracking",
+      "restock alerts",
+      "webpage alerts"
+    ],
+    "keywords": [
+      "watch website",
+      "website changed",
+      "price drop",
+      "restock",
+      "monitor page",
+      "change alert"
+    ],
+    "repo_url": "https://github.com/dgtlmoon/changedetection.io.git",
+    "project_hint": "docker",
+    "notes": "Existing web frontend. Prefer for persistent website-monitoring requests rather than a single fetch.",
+    "ref": "593e9cc48c2b475dacbc3dbdebe2f5136bef8efa",
+    "ref_label": "0.60.7"
+  },
+  {
+    "id": "linkding",
+    "name": "linkding",
+    "description": "Minimal self-hosted bookmark manager with tagging, search, archiving, and browser-oriented workflows.",
+    "capabilities": [
+      "bookmarks",
+      "bookmark manager",
+      "link collection",
+      "read later",
+      "tag links"
+    ],
+    "keywords": [
+      "bookmarks",
+      "save links",
+      "bookmark manager",
+      "read later",
+      "organize links",
+      "link library"
+    ],
+    "repo_url": "https://github.com/sissbruecker/linkding.git",
+    "project_hint": "docker",
+    "notes": "Existing web frontend. Good fit for persistent personal bookmark/link-management requests.",
+    "ref": "24b5ad6cc9bde497b5d1b1e86aed5a2fb7d25c2f",
+    "ref_label": "v1.47.0"
+  },
+  {
+    "id": "actual-budget",
+    "name": "Actual Budget",
+    "description": "Local-first personal finance and budgeting application.",
+    "capabilities": [
+      "personal finance",
+      "budgeting",
+      "expense tracking",
+      "transactions",
+      "budget reports"
+    ],
+    "keywords": [
+      "budget",
+      "personal finance",
+      "track spending",
+      "expenses",
+      "transactions",
+      "money manager",
+      "envelope budget"
+    ],
+    "repo_url": "https://github.com/actualbudget/actual.git",
+    "project_hint": "node",
+    "notes": "Existing frontend; local-first. Broad finance product, so select only when the user wants a real budgeting/finance app rather than a tiny calculator.",
+    "ref": "59fe126f637d858c061e1eeedbef5436c8f2225a",
+    "ref_label": "v26.9.0"
+  },
+  {
+    "id": "memos",
+    "name": "Memos",
+    "description": "Lightweight self-hosted Markdown-native note-taking and quick-capture application.",
+    "capabilities": [
+      "notes",
+      "quick capture",
+      "markdown notes",
+      "daily notes",
+      "personal knowledge"
+    ],
+    "keywords": [
+      "notes",
+      "note taking",
+      "quick notes",
+      "daily notes",
+      "markdown",
+      "memo",
+      "journal snippets"
+    ],
+    "repo_url": "https://github.com/usememos/memos.git",
+    "project_hint": "docker",
+    "notes": "Existing web frontend. Lightweight persistent notes product with SQLite-backed self-hosting.",
+    "ref": "2b2192d4e153bd04f1d325b60fd880cf00d68b01",
+    "ref_label": "v0.31.0"
+  },
+  {
+    "id": "mealie",
+    "name": "Mealie",
+    "description": "Self-hosted recipe manager, meal planner, and shopping-list application.",
+    "capabilities": [
+      "recipes",
+      "meal planning",
+      "shopping list",
+      "recipe import",
+      "cookbook"
+    ],
+    "keywords": [
+      "recipe manager",
+      "meal planner",
+      "shopping list",
+      "recipes",
+      "cookbook",
+      "plan meals"
+    ],
+    "repo_url": "https://github.com/mealie-recipes/mealie.git",
+    "project_hint": "docker",
+    "notes": "Existing web frontend. Full persistent household app; heavier than generation for a tiny recipe form.",
+    "ref": "dedc6cc75f2bd8e89108ad998970e7bdf6d4444f",
+    "ref_label": "v3.27.0"
+  },
+  {
+    "id": "libretranslate",
+    "name": "LibreTranslate",
+    "description": "Self-hosted machine-translation API and web interface powered by open-source translation models.",
+    "capabilities": [
+      "translation",
+      "offline translation",
+      "translate text",
+      "machine translation",
+      "translation api"
+    ],
+    "keywords": [
+      "translate",
+      "translator",
+      "offline translator",
+      "language translation",
+      "translation api"
+    ],
+    "repo_url": "https://github.com/LibreTranslate/LibreTranslate.git",
+    "project_hint": "python",
+    "notes": "Existing web/API surface. Model downloads can be large; select when local/private translation is specifically valuable.",
+    "ref": "497f6c678bdb175ff0baa75b9865d70f1ed8d108",
+    "ref_label": "v1.9.6"
+  },
+  {
+    "id": "karakeep",
+    "name": "Karakeep",
+    "description": "Self-hostable bookmark-everything app for links, notes, images, full-text search, and automatic tagging.",
+    "capabilities": [
+      "bookmarks",
+      "read later",
+      "web archive",
+      "notes",
+      "full text search",
+      "link tagging"
+    ],
+    "keywords": [
+      "save everything",
+      "bookmark",
+      "read later",
+      "archive links",
+      "web clips",
+      "save articles",
+      "link search"
+    ],
+    "repo_url": "https://github.com/karakeep-app/karakeep.git",
+    "project_hint": "docker",
+    "notes": "Existing web frontend. Heavier than linkding; choose when rich capture/search/archival is requested.",
+    "ref": "98c0c7896e855a5f2104f89651bb7e1322712df4",
+    "ref_label": "v0.33.2"
+  },
+  {
+    "id": "searxng",
+    "name": "SearXNG",
+    "description": "Privacy-respecting self-hosted metasearch engine that aggregates results from multiple search services.",
+    "capabilities": [
+      "web search",
+      "private search",
+      "metasearch",
+      "search engine"
+    ],
+    "keywords": [
+      "private search",
+      "search engine",
+      "metasearch",
+      "search the web",
+      "self hosted search"
+    ],
+    "repo_url": "https://github.com/searxng/searxng.git",
+    "project_hint": "docker",
+    "notes": "Existing web frontend. Persistent service with external search-engine dependencies; use for private metasearch requests.",
+    "ref": "e831fc2a1cad50c9979b5f6f680376410218188c",
+    "ref_label": null
+  },
+  {
+    "id": "calibre-web",
+    "name": "Calibre-Web",
+    "description": "Web interface for browsing, reading, organizing, and downloading eBooks stored in a Calibre library.",
+    "capabilities": [
+      "ebook library",
+      "ebook reader",
+      "book catalog",
+      "calibre library",
+      "ebook management"
+    ],
+    "keywords": [
+      "ebooks",
+      "ebook library",
+      "book library",
+      "calibre",
+      "read epub",
+      "organize books"
+    ],
+    "repo_url": "https://github.com/janeczku/calibre-web.git",
+    "project_hint": "python",
+    "notes": "Existing web frontend. Best when the user already has or wants a persistent eBook library; some optional features need Calibre/Ghostscript.",
+    "ref": "c3756a903e7d91b2ab7e12c1b5ff818a61cc1e16",
+    "ref_label": "0.6.27"
+  },
+  {
+    "id": "audiobookshelf",
+    "name": "Audiobookshelf",
+    "description": "Self-hosted audiobook and podcast server with a full web interface.",
+    "capabilities": [
+      "audiobooks",
+      "podcasts",
+      "audio library",
+      "media server",
+      "book listening"
+    ],
+    "keywords": [
+      "audiobooks",
+      "podcast server",
+      "audio library",
+      "listen to books",
+      "audiobook manager"
+    ],
+    "repo_url": "https://github.com/advplyr/audiobookshelf.git",
+    "project_hint": "docker",
+    "notes": "Existing web frontend. Persistent media service; select for library/server use cases, not one-off audio processing.",
+    "ref": "4b67c170ce46fd6ba770dc55c189ca13fef89b02",
+    "ref_label": "v2.36.1"
+  },
+  {
+    "id": "immich",
+    "name": "Immich",
+    "description": "High-performance self-hosted photo and video management application.",
+    "capabilities": [
+      "photo library",
+      "video library",
+      "photo backup",
+      "photo search",
+      "photo management"
+    ],
+    "keywords": [
+      "photo library",
+      "google photos alternative",
+      "photo backup",
+      "organize photos",
+      "photo manager",
+      "video library"
+    ],
+    "repo_url": "https://github.com/immich-app/immich.git",
+    "project_hint": "docker",
+    "notes": "Existing web frontend but very heavy/multi-service. Choose only for full photo/video-library requests and expect container orchestration work.",
+    "ref": "60b51cb3bc909e72fe963f4dfb1947515cb9ab3b",
+    "ref_label": "v3.2.2"
+  },
+  {
+    "id": "jellyfin",
+    "name": "Jellyfin",
+    "description": "Personal media server for organizing and streaming movies, TV, music, and other media across devices.",
+    "capabilities": [
+      "media streaming",
+      "movie library",
+      "tv library",
+      "music streaming",
+      "personal netflix",
+      "media server"
+    ],
+    "keywords": [
+      "my own netflix",
+      "stream my movies",
+      "media server",
+      "movie streaming",
+      "tv library",
+      "jellyfin",
+      "plex alternative",
+      "personal netflix"
+    ],
+    "repo_url": "https://github.com/jellyfin/jellyfin.git",
+    "project_hint": "docker",
+    "notes": "Complex persistent media server. Morfic uses Jellyfin’s official prebuilt container image to avoid source-build planning. Common local media folders are mounted read-only when present; external/custom folders still need a later folder-picker flow.",
+    "deployment_plan": {
+      "name": "Jellyfin",
+      "summary": "Personal media server using the official Jellyfin container image",
+      "project_type": "docker",
+      "install_commands": [],
+      "run_command": [],
+      "port": 8096,
+      "healthcheck_path": "/",
+      "env": {},
+      "frontend": {
+        "kind": "existing",
+        "title": "Jellyfin",
+        "description": "Personal media server",
+        "fields": []
+      },
+      "detected_files": [],
+      "compose_file": null,
+      "container_image": "jellyfin/jellyfin:latest",
+      "persistent_mounts": {
+        "jellyfin-config": "/config",
+        "jellyfin-cache": "/cache"
+      },
+      "media_mounts": true
+    },
+    "ref": "ee91c75e777da41a9c4f4855e70adc604fbf2ef8",
+    "ref_label": "v12.1"
+  },
+  {
+    "id": "whoareyou-family",
+    "name": "WhoareYou",
+    "description": "Private self-hosted relationship and family timeline app with household accounts, photos, family tree, comments, reactions, reminders, and guest sharing.",
+    "capabilities": [
+      "family social network",
+      "private family timeline",
+      "family photos",
+      "family tree",
+      "household sharing",
+      "relationship manager"
+    ],
+    "keywords": [
+      "private social network for family",
+      "family social media",
+      "family timeline",
+      "share photos with family",
+      "family tree",
+      "grandparents photos",
+      "household network"
+    ],
+    "repo_url": "https://github.com/dico/whoareyou.git",
+    "project_hint": "docker",
+    "notes": "Complex multi-user persistent app. Repository includes Dockerfile and docker-compose.yml and is designed for self-hosted family use. Requires container support and persistent database/media storage.",
+    "ref": "b4666a3ff9d27e9c9803cee667337c80b7eaba63",
+    "ref_label": null
+  },
+  {
+    "id": "cousins-matter",
+    "name": "Cousins Matter",
+    "description": "Self-hosted family social network with member profiles, galleries, forums, chat, events, polls, and private family content.",
+    "capabilities": [
+      "family social network",
+      "family directory",
+      "family photo gallery",
+      "family forum",
+      "family chat",
+      "family events"
+    ],
+    "keywords": [
+      "family social network",
+      "private family site",
+      "family forum",
+      "family chat",
+      "family photos",
+      "cousins",
+      "family community"
+    ],
+    "repo_url": "https://github.com/leolivier/cousins-matter.git",
+    "project_hint": "docker",
+    "notes": "Complex Docker-based family community app. Upstream reports Linux and Windows 11/WSL2 testing; macOS is not yet claimed upstream, so Morfic should treat macOS deployment as experimental until verified.",
+    "ref": "81db41c2a0f94fe8564358f64a050eefd209bf10",
+    "ref_label": "v2.6.1"
+  }
+]

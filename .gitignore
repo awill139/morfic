@@ -1,0 +1,26 @@
+# Virtual environments
+.venv/
+.venv-build/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+
+# Build output
+/build/
+/dist/
+/Morfic.spec
+
+# Local state and secrets
+.runtime/
+.env
+.env.*
+
+# Local scratch
+/brag-output/
+
+# OS
+.DS_Store

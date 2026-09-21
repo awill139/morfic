@@ -1,0 +1,37 @@
+name: Build desktop installers
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build Windows executable
+        shell: powershell
+        run: .\scripts\build_windows.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: morfic-windows
+          path: dist/Morfic.exe
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build macOS app and DMG
+        run: ./scripts/build_mac.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: morfic-macos
+          path: dist/Morfic.dmg
