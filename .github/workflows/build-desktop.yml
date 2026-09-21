@@ -32,22 +32,16 @@ jobs:
         include:
           - name: mac-apple-silicon
             os: macos-latest
-            shell: bash
-            build: ./scripts/build_mac.sh
             built: dist/Morfic.dmg
             app: dist/Morfic.app/Contents/MacOS/Morfic
             ext: dmg
           - name: mac-intel
             os: macos-15-intel
-            shell: bash
-            build: ./scripts/build_mac.sh
             built: dist/Morfic.dmg
             app: dist/Morfic.app/Contents/MacOS/Morfic
             ext: dmg
           - name: windows-x64
             os: windows-latest
-            shell: powershell
-            build: .\scripts\build_windows.ps1
             built: dist/Morfic.exe
             app: dist/Morfic.exe
             ext: exe
@@ -59,9 +53,15 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Build
-        shell: ${{ matrix.shell }}
-        run: ${{ matrix.build }}
+      # `shell:` cannot use the matrix context, so build with one step per OS.
+      - name: Build (macOS)
+        if: runner.os == 'macOS'
+        run: ./scripts/build_mac.sh
+
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: .\scripts\build_windows.ps1
 
       # Starts the built app with an empty data directory and checks that it answers, is the expected
       # version, serves the UI, and rejects a request with a foreign Host header (the local security check).
