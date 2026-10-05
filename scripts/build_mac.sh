@@ -101,11 +101,15 @@ hdiutil create \
 # created once with: xcrun notarytool store-credentials <profile> ...).
 if [[ -n "${MORFIC_CODESIGN_IDENTITY:-}" ]]; then
   codesign --force --sign "$MORFIC_CODESIGN_IDENTITY" --timestamp "$DMG"
+  # CI passes the Apple ID, team, and app-specific password directly instead of a keychain profile.
   if [[ -n "${MORFIC_NOTARY_PROFILE:-}" ]]; then
     xcrun notarytool submit "$DMG" --keychain-profile "$MORFIC_NOTARY_PROFILE" --wait
     xcrun stapler staple "$DMG"
+  elif [[ -n "${APPLE_ID:-}" && -n "${APPLE_TEAM_ID:-}" && -n "${APPLE_APP_PASSWORD:-}" ]]; then
+    xcrun notarytool submit "$DMG" --apple-id "$APPLE_ID" --team-id "$APPLE_TEAM_ID" --password "$APPLE_APP_PASSWORD" --wait
+    xcrun stapler staple "$DMG"
   else
-    echo "MORFIC_NOTARY_PROFILE not set: DMG is signed but not notarized." >&2
+    echo "No notarization credentials set: DMG is signed but not notarized." >&2
   fi
 fi
 
