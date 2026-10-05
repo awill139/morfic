@@ -53,10 +53,43 @@ jobs:
         with:
           python-version: '3.12'
 
+      # Imports the Developer ID certificate into a temporary keychain and exports its identity for the build.
+      # Fails if the secret is missing, so a macOS release can never ship unsigned by accident.
+      - name: Import signing certificate (macOS)
+        if: runner.os == 'macOS'
+        env:
+          CERT_P12_BASE64: ${{ secrets.MACOS_CERT_P12_BASE64 }}
+          CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+        run: |
+          set -euo pipefail
+          test -n "$CERT_P12_BASE64" || { echo "MACOS_CERT_P12_BASE64 secret is not set"; exit 1; }
+          KEYCHAIN="$RUNNER_TEMP/build.keychain-db"
+          KC_PASS="$(openssl rand -hex 24)"
+          echo "$CERT_P12_BASE64" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security create-keychain -p "$KC_PASS" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KC_PASS" "$KEYCHAIN"
+          security import "$RUNNER_TEMP/cert.p12" -P "$CERT_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN"
+          rm -f "$RUNNER_TEMP/cert.p12"
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KC_PASS" "$KEYCHAIN" >/dev/null
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | sed 's/[" ]//g')
+          IDENTITY="$(security find-identity -v -p codesigning "$KEYCHAIN" | sed -n 's/.*"\(Developer ID Application:[^"]*\)".*/\1/p' | head -1)"
+          test -n "$IDENTITY" || { echo "No Developer ID Application identity found in the certificate"; exit 1; }
+          echo "MORFIC_CODESIGN_IDENTITY=$IDENTITY" >> "$GITHUB_ENV"
+          echo "Signing with: $IDENTITY"
+
       # `shell:` cannot use the matrix context, so build with one step per OS.
       - name: Build (macOS)
         if: runner.os == 'macOS'
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
         run: ./scripts/build_mac.sh
+
+      - name: Remove temporary keychain (macOS)
+        if: always() && runner.os == 'macOS'
+        run: security delete-keychain "$RUNNER_TEMP/build.keychain-db" || true
 
       - name: Build (Windows)
         if: runner.os == 'Windows'
